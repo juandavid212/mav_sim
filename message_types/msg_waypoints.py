@@ -11,11 +11,7 @@ import numpy as np
 
 class msg_waypoints:
     def __init__(self):
-        # the first two flags are used for interacting with the path planner
-        #
-        # flag to indicate waypoints recently changed (set by planner)
         self.flag_waypoints_changed = True
-        # flag to indicate that the waypoint manager needs new waypoints (set by manager)
         self.flag_manager_requests_waypoints = True
 
         # type of waypoint following:
@@ -25,7 +21,6 @@ class msg_waypoints:
         self.type = 'straight_line'
         # self.type = 'fillet'
         # self.type = 'dubins'
-        # maximum number of waypoints.  This is used to pre-allocate memory to improve efficiency
         self.max_waypoints = 100
         # current number of valid waypoints in memory
         self.num_waypoints = 0

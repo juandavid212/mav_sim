@@ -1,9 +1,6 @@
 import numpy as np
 
 def Quaternion2Euler(q):
-    # phi = np.arctan2(2*(q[0]*q[1] + q[2]*q[3]),(1 - 2*(q[1]**2 + q[2]**2)))
-    # theta = np.arcsin(2*(q[0]*q[2] - q[3]*q[1]))
-    # psi = np.arctan2(2*(q[0]*q[3] + q[1]*q[2]),(1 - 2*(q[2]**2 + q[3]**2)))
     phi = np.arctan2(2*(q[0]*q[1] + q[2]*q[3]),(q[0]**2 + q[3]**2 - q[1]**2 - q[2]**2))
     theta = np.arcsin(2*(q[0]*q[2] - q[3]*q[1]))
     psi = np.arctan2(2*(q[0]*q[3] + q[1]*q[2]),(q[0]**2 +q[1]**2 - q[2]**2 - q[3]**2))
@@ -33,12 +30,6 @@ def Quaternion2Rotation(e): #body to inertial
     return R.squeeze()
 
 def Euler2Rotation(phi, theta, psi):
-    # cy = np.cos(psi * 0.5)
-    # sy = np.sin(psi * 0.5)
-    # ct = np.cos(theta * 0.5)
-    # st = np.sin(theta * 0.5)
-    # cp = np.cos(phi * 0.5)
-    # sp = np.sin(phi * 0.5)
     cy = np.cos(psi)
     sy = np.sin(psi)
     ct = np.cos(theta)

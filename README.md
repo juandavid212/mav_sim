@@ -1,9 +1,4 @@
-# Fixed-wing UAV Sim
-A python implementation of a small fixed wing UAV simulator outlined in [Small Unmanned Aircraft: Theory and Practice](https://uavbook.byu.edu/doku.php).
+# Mav Sim
 
-Includes wind simulations, controllers, and a Dubins RRT path planner. 
+This repo contains a docker container embedded and only needs to be build with vscode.
 
-
-Run this command for necessary python packages:
-
-```sudo pip3 install pyqtgraph PyQt5 pyopengl```

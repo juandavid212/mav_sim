@@ -1,0 +1,26 @@
+{
+    "name": "My Dev Container",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+            "bash": {
+                "path": "/bin/bash"
+            }
+        }
+    },
+    "extensions": [
+        "ms-vscode.cpptools",
+        "ms-python.python"
+    ],
+    "remoteUser": "appuser",
+    "runArgs": [
+        "--shm-size=8gb",
+        "--privileged",
+        "--ipc=host",
+        "-e", "DISPLAY",
+        "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
+        "-v", "/home/juan212/wkspace/docker_mount:/workspaces/docker_mount",
+    ]
+}

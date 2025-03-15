@@ -1,8 +1,5 @@
-import sys
-sys.path.append('..')
 import numpy as np
-sys.path.append('../tools')
-from angleConversions import Euler2Quaternion
+from tools.angleConversions import Euler2Quaternion
 
 ######################################################################################
 #   Initial Conditions
