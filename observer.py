@@ -11,6 +11,8 @@ sys.path.append('..')
 import parameters.simulation_parameters as SIM
 import parameters.sensor_parameters as SENSOR
 import parameters.aerosonde_parameters as MAV
+sys.path.append('../tools')
+# from angleConversions import Euler2Rotation
 
 from message_types.msg_state import msg_state
 
@@ -45,7 +47,6 @@ class observer:
         self.estimated_state.Va = np.sqrt(2.*self.lpf_diff.update(measurements.diff_pressure)/MAV.rho)
 
         # estimate phi and theta with simple ekf
-        # self.estimated_state.phi, self.estimated_state.theta = self.attitude_ekf.update(self.estimated_state, measurements)
         self.attitude_ekf.update(self.estimated_state, measurements)
 
         # # estimate pn, pe, Vg, chi, wn, we, psi
@@ -81,25 +82,22 @@ class ekf_attitude:
         self.R_accel = np.array([[SENSOR.accel_sigma**2, 0., 0.],
                                  [0., SENSOR.accel_sigma**2, 0.],
                                  [0., 0., SENSOR.accel_sigma**2]])
-        self.N = 10  # number of prediction step per sample
-        self.xhat = np.array([[0., 0.]]).T # initial state: phi, theta Could initialize to real??
-        self.P = np. array([[1e-6, 0.],
-                            [0., 1e-6]]) # initial P. What value??
-        # self.P = np.array([[(np.pi/2)**2, 0.],
-        #                   [0., (np.pi/2)**2]])  # initial P. What value??
+        self.N = 10
+        self.xhat = np.array([[0., 0.]]).T
+        self.P = np. array([[np.pi**2, 0.],
+                            [0., np.pi**2]])
         self.Ts = SIM.ts_control/self.N
 
     def update(self, state, measurement):
         self.propagate_model(state)
         self.measurement_update(state, measurement)
-        state.phi = self.xhat.item(0)
+        state.phi = self.xhat.item(0) #should this return something??
         state.theta = self.xhat.item(1)
 
     def f(self, x, state):
         # system dynamics for propagation model: xdot = f(x, u)
         _f = np.array([[state.p + state.q*np.sin(x.item(0))*np.tan(x.item(1)) + state.r*np.cos(x.item(0))*np.tan(x.item(1))],
                        [state.q*np.cos(x.item(0)) - state.r*np.sin(x.item(0))]])
-        #can switch out p for sensor ??
         return _f
 
     def h(self, x, state):
@@ -119,9 +117,6 @@ class ekf_attitude:
             # compute G matrix for gyro noise
             G = np.array([[1., np.sin(self.xhat.item(0))*np.tan(self.xhat.item(1)), np.cos(self.xhat.item(0))*np.tan(self.xhat.item(1))],
                           [0., np.cos(self.xhat.item(0)), -np.sin(self.xhat.item(0))]])
-            # update P with continuous time model
-            # self.P = self.P + self.Ts * (A @ self.P + self.P @ A.T + self.Q + G @ self.Q_gyro @ G.T)
-
             # convert to discrete time models
             A_d = np.eye(2) + A*self.Ts + A@A*self.Ts**2./2.
             G_d = self.Ts*G
@@ -161,17 +156,17 @@ class ekf_position:
                            [0., 0., SENSOR.gps_Vg_sigma**2/400, 0., 0., 0.],
                            [0., 0., 0., SENSOR.gps_course_sigma**2, 0., 0.]])
         self.R_pseudo = np.array([[1 ** 2, 0.],
-                                  [0., 1 ** 2]])
-        self.N = 5  # number of prediction step per sample
+                                  [0., 1 ** 2]]) 
+        self.N = 5
         self.Ts = (SIM.ts_control / self.N)
-        self.xhat = np.array([[0., 0., 25., 0., 0., 0., 0.]]).T #Could initialize better??
-        self.P = np.array([[1, 0., 0., 0., 0., 0., 0.],
-                           [0., 1, 0., 0., 0., 0., 0.],
-                           [0., 0., 1, 0., 0., 0., 0.],
-                           [0., 0., 0., 1, 0., 0., 0.],
-                           [0., 0., 0., 0., 1, 0., 0.],
-                           [0., 0., 0., 0., 0., 1, 0.],
-                           [0., 0., 0., 0., 0., 0., 1]])*1e-6        
+        self.xhat = np.array([[0., 0., 25., 0., 0., 0., 0.]]).T
+        self.P = np.array([[100**2, 0., 0., 0., 0., 0., 0.],
+                           [0., 100**2, 0., 0., 0., 0., 0.],
+                           [0., 0., 1**2, 0., 0., 0., 0.],
+                           [0., 0., 0., np.pi**2, 0., 0., 0.],
+                           [0., 0., 0., 0., 1**2, 0., 0.],
+                           [0., 0., 0., 0., 0., 1**2, 0.],
+                           [0., 0., 0., 0., 0., 0., np.pi**2]])
         self.gps_n_old = 9999
         self.gps_e_old = 9999
         self.gps_Vg_old = 9999

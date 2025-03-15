@@ -14,7 +14,7 @@ from wind_simulation import wind_simulation
 from control.autopilot import autopilot
 from mav_dynamics import mav_dynamics
 from observer import observer
-from simulation.path_manager.path_follower import path_follower
+from path_manager.path_follower import path_follower
 from viewers.path_viewer import path_viewer
 from message_types.msg_autopilot import msg_autopilot
 
