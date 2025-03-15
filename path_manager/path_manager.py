@@ -47,6 +47,7 @@ class path_manager:
         # self.dubins_manager(waypoints, radius, state)
         if waypoints.flag_waypoints_changed == True:
             waypoints.flag_waypoints_changed = False
+        self.path.airspeed = waypoints.airspeed.item(self.ptr_current)
         return self.path
 
     def line_manager(self, waypoints, state):

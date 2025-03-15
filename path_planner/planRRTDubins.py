@@ -7,13 +7,12 @@ from parameters.dubins_parameters import dubins_parameters
 class planRRTDubins():
     def __init__(self, map):
         self.segmentLength = 300 # standard length of path segments
-        self.pointsAlongPathSpacing = 1
-        self.clearance = 0
-        np.random.seed(1111)  # For Debugging
-
+        self.pointsAlongPathSpacing = 0.1
+        self.clearance = 20
+        np.random.seed(42)
     def planPath(self, wpp_start, wpp_end, R_min, map):
 
-        self.segmentLength = 4.5*R_min #2.5 ??
+        self.segmentLength = 3.5*R_min
 
         # desired down position is down position of end node
         pd = wpp_end.item(2)
@@ -57,11 +56,6 @@ class planRRTDubins():
         if np.isnan(dubinPath.r1.item(1)):
             return True
         N, E, D = self.pointsAlongDubinsPath(dubinPath, self.pointsAlongPathSpacing)
-        # spacing = map.city_width / map.num_city_blocks
-        # N += (spacing * .5)
-        # E += (spacing * .5)
-        # N = np.remainder(N, spacing)
-        # E = np.remainder(E, spacing)
 
         #Check for within circle of square obstacle
         for i in range(0,len(map.building_north)):

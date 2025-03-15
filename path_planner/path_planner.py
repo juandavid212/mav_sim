@@ -26,14 +26,14 @@ class path_planner:
         Va = 25
         numberWaypoints = 4
         primaryWaypoints = np.array([[0., 0., -100.],
-                                        [1400., 0., -100.],
                                         [1400., 1400., -100.],
-                                        [0., 1400., -100.]]).T
+                                        [0., 1400., -100.],
+                                        [0., 0., -100.]]).T
         primaryWaypointsAirspeed = np.array([[Va, Va, Va, Va]])
         primaryCourseAngles = np.array([[np.radians(0),
-                                            np.radians(0),
                                             np.radians(90),
-                                            np.radians(180)]])
+                                            np.radians(180),
+                                            np.radians(0)]])
         for i in range(0, numberWaypoints):
             # current configuration vector format: N, E, D, Va
             if i == 0 and np.sqrt((state.pn - primaryWaypoints[0,0])**2 + (state.pe - primaryWaypoints[1,0])**2) > PLAN.R_min:

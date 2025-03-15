@@ -8,7 +8,7 @@ class planRRT():
         self.segmentLength = 300 # standard length of path segments
         self.pointsAlongPathSpacing = 5.
         self.clearance = 30
-        # np.random.seed(1112)  # For Debugging
+        # np.random.seed(43)  # For Debugging
 
     def planPath(self, wpp_start, wpp_end, map):
 
