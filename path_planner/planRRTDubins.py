@@ -120,8 +120,6 @@ class planRRTDubins():
                 not self.collision(tree[minIndex, :], newNode[0, :], map, R_min):
                 successFlag = True
                 tree = np.append(tree, newNode,axis=0)  # Append new node to the full tree
-                # points = self.ax.plot([tree[minIndex, 0], newNode.item(0)], [tree[minIndex, 1], newNode.item(1)],
-                #                       [-tree[minIndex, 2], -newNode.item(2)], color='r')
 
                 # Check to see if the new node can connect to the end node
                 dist = np.linalg.norm(newNode[0, 0:3]-endN[0:3])
@@ -142,9 +140,6 @@ class planRRTDubins():
             if tree[i, 6] == 1:
                 connectedNodes.append(i)
 
-        # Find the path with the shortest distance (could find a different heuristic for choosing which path to go with,
-        # especially because we are going to shorten the path anyway??). Choose shortest after smoothing?? Or choose for
-        # least turns.
         minIndex = np.argmin(tree[connectedNodes, 3])
         minIndex = connectedNodes[minIndex]
         waypoints = msg_waypoints()
@@ -178,11 +173,8 @@ class planRRTDubins():
         waypoints.num_waypoints += 1
         index = 1
         while index < path.num_waypoints - 1:
-            # chi = np.arctan2((path.ned[1,index + 1] - waypoints.ned[1,waypoints.num_waypoints-1]),
-            #                  (path.ned[0,index + 1] - waypoints.ned[0,waypoints.num_waypoints-1]))
             if self.collision(np.concatenate((waypoints.ned[:,waypoints.num_waypoints-1],waypoints.course[:,waypoints.num_waypoints-1]),axis=0), np.concatenate((path.ned[:,index + 1],path.course[:,index + 1]),axis=0), map, R_min) or \
                 np.linalg.norm(waypoints.ned[:,waypoints.num_waypoints-1] - path.ned[:,index + 1]) <= 2.*R_min:
-                # self.flyablePath(smoothedPath[len(smoothedPath) - 1], path[index + 1], prev_chi, chi):
                 waypoints.ned[:,waypoints.num_waypoints] = path.ned[:, index]
                 waypoints.course[:,waypoints.num_waypoints] = path.course[:,index]
                 waypoints.airspeed[:,waypoints.num_waypoints] = path.airspeed[:,index]
@@ -192,11 +184,6 @@ class planRRTDubins():
         waypoints.course[:, waypoints.num_waypoints] = path.course[:, path.num_waypoints - 1]
         waypoints.airspeed[:, waypoints.num_waypoints] = path.airspeed[:, path.num_waypoints - 1]
         waypoints.num_waypoints += 1
-        # smoothedPath.append(path[len(path) - 1])
-        # for i in range(0, len(smoothedPath) - 1):  # Could add other things to this cost function if wanted
-        #     cost += np.sqrt(
-        #         (smoothedPath[i].n - smoothedPath[i + 1].n) ** 2 + (smoothedPath[i].e - smoothedPath[i + 1].e) ** 2 + \
-        #         (smoothedPath[i].d - smoothedPath[i + 1].d) ** 2)
 
         return waypoints
 
@@ -213,7 +200,6 @@ class planRRTDubins():
         if dubinspath.dir_s > 0:
             if th1 >= th2:
                 th = np.concatenate((np.arange(th1,2*np.pi, Del), np.arange(0, th2, Del)), axis=0)
-                # th = [th1:Del: 2 * pi, 0: Del:th2]
             else:
                 th = np.arange(th1, th2, Del)
         else:
@@ -228,18 +214,14 @@ class planRRTDubins():
             X = np.append(X, dubinspath.center_s.item(0) + dubinspath.radius * np.cos(th[i]))
             Y = np.append(Y, dubinspath.center_s.item(1) + dubinspath.radius * np.sin(th[i]))
             Z = np.append(Z, -dubinspath.center_s.item(2))
-            # X = [X, dubinspath.cs(1) + dubinspath.R * np.cos(th(i))];
-            # Y = [Y, dubinspath.cs(2) + dubinspath.R * np.sin(th(i))];
 
 
         # points along straight line
         sig = 0
         while sig <= 1:
             X =np.append(X,(1 - sig) * dubinspath.r1.item(0) + sig * dubinspath.r2.item(0))
-            # X = [X; (1 - sig) * dubinspath.w1(1) + sig * dubinspath.w2(1)];
             Y = np.append(Y, (1 - sig) * dubinspath.r1.item(1) + sig * dubinspath.r2.item(1))
             Z = np.append(Z, -(1 - sig) * dubinspath.r1.item(2) - sig * dubinspath.r2.item(2))
-            # Y = [Y; (1 - sig) * dubinspath.w1(2) + sig * dubinspath.w2(2)];
             sig += Del
 
         # points along end circle
@@ -248,12 +230,10 @@ class planRRTDubins():
         if dubinspath.dir_e > 0:
             if th1 >= th2:
                 th = np.concatenate((np.arange(th1, 2 * np.pi, Del),np.arange(0, th2, Del)) , axis=0)
-                # th = [th1:Del: 2 * pi, 0: Del:th2];
             else:
                 th = np.arange(th1, th2, Del)
         else:
             if th1 <= th2:
-                # th = [th1:-Del: 0, 2 * pi: -Del:th2];
                 th = np.concatenate((np.arange(th1, 0, -Del), np.arange(2 * np.pi, th2, -Del)), axis=0)
             else:
                 th = np.arange(th1, th2, -Del)

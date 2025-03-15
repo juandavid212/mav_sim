@@ -10,7 +10,6 @@ sys.path.append('..')
 from message_types.msg_waypoints import msg_waypoints
 from path_planner.planRRT import planRRT
 from path_planner.planRRTDubins import planRRTDubins
-from path_planner.planRRTDubinsProj import planRRTDubinsProj
 
 class path_planner:
     def __init__(self):
@@ -18,7 +17,6 @@ class path_planner:
         self.waypoints = msg_waypoints()
         self.rrt = planRRT(map)
         self.rrtDubins = planRRTDubins(map)
-        self.rrtDubinsProj = planRRTDubinsProj(map)
 
     def update(self, map, state, PLAN):
         self.waypoints.type = 'dubins'

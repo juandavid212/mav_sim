@@ -22,10 +22,6 @@ def _derivatives( state, delta, gamma, Va):
 
 
     # Forces due to gravity
-    # phi, theta, psi = Quaternion2Euler(self._state[6:10])
-    # fx = -MAV.mass*MAV.gravity * np.sin(theta)
-    # fy = MAV.mass*MAV.gravity*np.cos(theta)*np.sin(phi)
-    # fz = MAV.mass*MAV.gravity*np.cos(theta)*np.cos(phi)
     fx = MAV.mass * MAV.gravity * 2 * (e1 * e3 - e2 * e0)
     fy = MAV.mass * MAV.gravity * 2 * (e2 * e3 + e1 * e0)
     fz = MAV.mass * MAV.gravity * (e3 ** 2 + e0 ** 2 - e1 ** 2 - e2 ** 2)
@@ -88,14 +84,6 @@ def _derivatives( state, delta, gamma, Va):
     """
     for the dynamics xdot = f(x, u), returns f(x, u)
     """
-
-    #   extract forces/moments
-    # fx = forces_moments.item(0)
-    # fy = forces_moments.item(1)
-    # fz = forces_moments.item(2)
-    # l = forces_moments.item(3)
-    # m = forces_moments.item(4)
-    # n = forces_moments.item(5)
 
     # position kinematics
     pn_dot = (e1 ** 2 + e0 ** 2 - e2 ** 2 - e3 ** 2) * u + \
